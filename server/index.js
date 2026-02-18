@@ -49,6 +49,11 @@ app.use((req, res, next) => {
 app.use(cors(corsOptions));
 app.use(express.json());
 
+// Healthcheck route to verify the server is running (DB not required)
+app.get('/ping', (req, res) => {
+  res.json({ ok: true, time: Date.now(), env: process.env.NODE_ENV || 'development' });
+});
+
 // GET semua items - untuk autocomplete di form
 app.get('/api/items', async (req, res) => {
   try {
