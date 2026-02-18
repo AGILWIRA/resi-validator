@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { BrowserMultiFormatReader } from '@zxing/library';
 import './ValidasiDetail.css';
@@ -20,22 +20,7 @@ export default function ValidasiDetail() {
   const [scanning, setScanning] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchResiDetail();
-  }, [resiId]);
-
-  // Auto-verify when code is scanned from device/camera
-  useEffect(() => {
-    if (scannedCode && isScannedFromDevice) {
-      const timer = setTimeout(() => {
-        handleVerifyItem();
-        setIsScannedFromDevice(false);
-      }, 500);
-      return () => clearTimeout(timer);
-    }
-  }, [scannedCode, isScannedFromDevice]);
-
-  const fetchResiDetail = async () => {
+  const fetchResiDetail = useCallback(async () => {
     try {
       const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:4000';
       const res = await fetch(`${apiUrl}/api/resi/${resiId}`);
@@ -60,7 +45,7 @@ export default function ValidasiDetail() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [resiId]);
 
   // Camera / scanner handlers
   const startScanner = async () => {
@@ -117,7 +102,7 @@ export default function ValidasiDetail() {
     };
   };
 
-  const handleVerifyItem = async () => {
+  const handleVerifyItem = useCallback(async () => {
     if (!scannedCode.trim()) {
       setError('Silakan input atau scan barcode terlebih dahulu');
       return;
@@ -199,15 +184,7 @@ export default function ValidasiDetail() {
       console.error(err);
       setError('Gagal verifikasi item');
     }
-  };
-
-  const handleManualVerify = (itemCode, itemIndex) => {
-    setCurrentItemIndex(itemIndex);
-    setScannedCode(itemCode);
-    setTimeout(() => handleVerifyItem(), 100);
-  };
-
-  const allVerified = items.every((item) => verificationStatus[item.id]?.verified);
+  }, [items, currentItemIndex, scannedCode, verificationStatus]);
 
   const handleModalAction = () => {
     if (modalData.type === 'success') {
@@ -232,6 +209,23 @@ export default function ValidasiDetail() {
       }, 300);
     }
   };
+
+  useEffect(() => {
+    fetchResiDetail();
+  }, [resiId, fetchResiDetail]);
+
+  // Auto-verify when code is scanned from device/camera
+  useEffect(() => {
+    if (scannedCode && isScannedFromDevice) {
+      const timer = setTimeout(() => {
+        handleVerifyItem();
+        setIsScannedFromDevice(false);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [scannedCode, isScannedFromDevice, handleVerifyItem]);
+
+  const allVerified = items.every((item) => verificationStatus[item.id]?.verified);
 
   if (loading) {
     return (
