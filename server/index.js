@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
+const runMigrations = require('./runMigrations');
 
 console.log('[Server] DATABASE_URL available:', !!process.env.DATABASE_URL);
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
@@ -230,4 +231,14 @@ app.post('/api/resi_items/:id/verify', async (req, res) => {
 });
 
 const port = process.env.PORT || 4000;
-app.listen(port, () => console.log(`Server listening on ${port}`));
+
+// Run migrations before starting server
+runMigrations()
+  .then(() => {
+    console.log('[Server] Migrations completed, starting express server...');
+    app.listen(port, () => console.log(`Server listening on ${port}`));
+  })
+  .catch(err => {
+    console.error('[Server] Migration failed, exiting:', err.message);
+    process.exit(1);
+  });

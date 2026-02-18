@@ -1,1 +1,1 @@
-web: node server/runMigrations.js && node server/index.js
+web: node server/index.js
