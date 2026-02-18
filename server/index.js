@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
 
+console.log('[Server] DATABASE_URL available:', !!process.env.DATABASE_URL);
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
 const app = express();
