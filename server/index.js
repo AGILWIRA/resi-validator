@@ -1,4 +1,7 @@
-require('dotenv').config({ override: false }); // Don't override existing env vars
+// Only load .env in development, not in production (Railway)
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config({ override: false });
+}
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');

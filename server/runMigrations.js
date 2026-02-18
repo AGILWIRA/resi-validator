@@ -2,8 +2,10 @@ const fs = require('fs');
 const path = require('path');
 const { Pool } = require('pg');
 
-// Load .env but don't override existing environment variables
-require('dotenv').config({ override: false });
+// Only load .env in development
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config({ override: false });
+}
 
 async function run() {
   console.log('[Migration] DATABASE_URL:', process.env.DATABASE_URL ? 'SET' : 'NOT SET');
