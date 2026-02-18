@@ -45,7 +45,8 @@ async function run() {
 
     console.log('[Migration] Migrations finished successfully');
   } catch (err) {
-    console.error('Migration error', err);
+    console.error('[Migration] ERROR:', err.message);
+    console.error('[Migration] Full error:', err);
     process.exitCode = 1;
     throw err;
   } finally {

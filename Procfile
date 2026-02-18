@@ -1,1 +1,1 @@
-web: cd server && node runMigrations.js && node index.js
+web: node server/runMigrations.js && node server/index.js
