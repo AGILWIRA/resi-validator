@@ -51,6 +51,12 @@ app.use((req, res, next) => {
 app.use(cors(corsOptions));
 app.use(express.json());
 
+// Log all incoming requests
+app.use((req, res, next) => {
+  console.log(`[Request] ${req.method} ${req.path}`);
+  next();
+});
+
 // Healthcheck route to verify the server is running (DB not required)
 app.get('/ping', (req, res) => {
   res.json({ ok: true, time: Date.now(), env: process.env.NODE_ENV || 'development' });
@@ -232,7 +238,21 @@ app.post('/api/resi_items/:id/verify', async (req, res) => {
 
 const port = process.env.PORT || 4000;
 
+// Add 404 handler at the end
+app.use((req, res) => {
+  console.log(`[404] Route not found: ${req.method} ${req.path}`);
+  res.status(404).json({ error: 'Route not found' });
+});
+
+// Error handler
+app.use((err, req, res, next) => {
+  console.error('[Error]', err);
+  res.status(500).json({ error: 'Internal server error' });
+});
+
 // Run migrations before starting server
+console.log('[Server] PORT from env:', process.env.PORT);
+console.log('[Server] Final port to listen:', port);
 runMigrations()
   .then(() => {
     console.log('[Server] Migrations completed, starting express server...');
