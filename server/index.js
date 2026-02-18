@@ -27,6 +27,25 @@ const corsOptions = {
   allowedHeaders: ['Content-Type', 'Authorization']
 };
 
+// Force CORS headers at the edge of our app to avoid proxy/platform headers
+app.use((req, res, next) => {
+  const origin = req.get('Origin');
+  if (origin && allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  } else if (!origin) {
+    // server-to-server or same-origin
+    res.setHeader('Access-Control-Allow-Origin', '*');
+  } else {
+    // default to explicit allowed Vercel origin to avoid mismatched host header
+    res.setHeader('Access-Control-Allow-Origin', 'https://resi-validator.vercel.app');
+  }
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+  if (req.method === 'OPTIONS') return res.sendStatus(200);
+  next();
+});
+
 app.use(cors(corsOptions));
 app.use(express.json());
 
