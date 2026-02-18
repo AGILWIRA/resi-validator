@@ -1,1 +1,1 @@
-web: node server/index.js
+web: npm install --prefix server && npm start --prefix server
