@@ -1,1 +1,1 @@
-web: npm install --prefix server && npm start --prefix server
+web: cd server && node runMigrations.js && node index.js
