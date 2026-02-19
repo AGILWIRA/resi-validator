@@ -169,6 +169,79 @@
   background: #0056b3;
 }
 
+.verify-btn.secondary-btn {
+  background: #17a2b8;
+}
+
+.verify-btn.secondary-btn:hover {
+  background: #138496;
+}
+
+.verify-btn.danger-btn {
+  background: #6c757d;
+}
+
+.verify-btn.danger-btn:hover {
+  background: #5a6268;
+}
+
+.scan-controls {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+  align-items: stretch;
+}
+
+.scan-input-wrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.scan-action-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.scan-file {
+  margin-bottom: 12px;
+}
+
+.scan-video-wrap {
+  margin-bottom: 12px;
+}
+
+.scan-video {
+  width: 100%;
+  max-height: 360px;
+  border-radius: 8px;
+  background: #000;
+}
+
+@media (max-width: 640px) {
+  .validasi-detail-content {
+    padding: 1rem;
+  }
+
+  .scanner-section {
+    padding: 1.25rem;
+  }
+
+  .scan-controls {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .scan-action-buttons {
+    width: 100%;
+  }
+
+  .scan-action-buttons .verify-btn {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+}
+
 .verification-result {
   text-align: center;
   padding: 2rem;

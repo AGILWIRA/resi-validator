@@ -48,12 +48,18 @@ export default function ValidasiDetail() {
   }, [resiId]);
 
   // Camera / scanner handlers
+  const pickBackCamera = (devices) => {
+    if (!devices || devices.length === 0) return null;
+    const byLabel = devices.find((d) => /back|rear|environment/i.test(d.label));
+    return (byLabel || devices[devices.length - 1]).deviceId;
+  };
+
   const startScanner = async () => {
     setError('');
     try {
       codeReaderRef.current = new BrowserMultiFormatReader();
       const devices = await codeReaderRef.current.listVideoInputDevices();
-      const deviceId = devices && devices.length ? devices[0].deviceId : null;
+      const deviceId = pickBackCamera(devices);
       await codeReaderRef.current.decodeFromVideoDevice(deviceId, videoRef.current, (result, err) => {
         if (result) {
           setScannedCode(result.getText());
@@ -334,8 +340,8 @@ export default function ValidasiDetail() {
           {!currentStatus?.verified ? (
             <div className="scan-form">
               <label htmlFor="scanCode">Scan Barcode atau Ketik Kode: ({currentStatus?.scannedCount || 0}/{currentStatus?.requiredCount || 0})</label>
-              <div style={{ display: 'flex', gap: 12, marginBottom: 12 }}>
-                <div style={{ flex: 1 }}>
+              <div className="scan-controls">
+                <div className="scan-input-wrap">
                   <input
                     id="scanCode"
                     type="text"
@@ -346,28 +352,28 @@ export default function ValidasiDetail() {
                     className="scan-input"
                   />
                 </div>
-                <div style={{ display: 'flex', gap: 8 }}>
+                <div className="scan-action-buttons">
                   <button onClick={handleVerifyItem} className="verify-btn">
                     Verifikasi
                   </button>
                   {!scanning ? (
-                    <button onClick={startScanner} className="verify-btn" style={{ background: '#17a2b8' }}>
+                    <button onClick={startScanner} className="verify-btn secondary-btn">
                       Buka Kamera
                     </button>
                   ) : (
-                    <button onClick={stopScanner} className="verify-btn" style={{ background: '#6c757d' }}>
+                    <button onClick={stopScanner} className="verify-btn danger-btn">
                       Hentikan Kamera
                     </button>
                   )}
                 </div>
               </div>
 
-              <div style={{ marginBottom: 12 }}>
+              <div className="scan-file">
                 <input type="file" accept="image/*" onChange={handleFileInput} />
               </div>
 
-              <div style={{ marginBottom: 12 }}>
-                <video ref={videoRef} style={{ width: '100%', maxHeight: 360, borderRadius: 8 }} autoPlay muted />
+              <div className="scan-video-wrap">
+                <video ref={videoRef} className="scan-video" autoPlay muted />
               </div>
 
               {scannedCode && (
