@@ -32,7 +32,10 @@ async function run() {
     throw new Error('DATABASE_URL environment variable is required');
   }
   
-  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: isRailway ? { rejectUnauthorized: false } : undefined
+  });
   const client = await pool.connect();
   try {
     console.log('[Migration] Running migrations...');

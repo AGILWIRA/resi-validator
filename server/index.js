@@ -26,7 +26,10 @@ function describeDbUrl(value) {
 
 console.log('[Server] DATABASE_URL available:', !!process.env.DATABASE_URL);
 console.log('[Server] DATABASE_URL host:', describeDbUrl(process.env.DATABASE_URL));
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: isRailway ? { rejectUnauthorized: false } : undefined
+});
 
 const app = express();
 
