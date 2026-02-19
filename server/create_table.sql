@@ -35,4 +35,5 @@ INSERT INTO item (item_code, item_name, compatible_phone) VALUES
 ('BRP673', 'Rakkipanda - BLP 673', 'A3s/ A5/ A5s / AX5s / A11k / A12 2020/ A31 2020/ Realme C1 / Realme 2'),
 ('BRP631', 'Rakkipanda - BLP 631', 'F3/F5/F5 Youth/ A73/ A77'),
 ('BRPA50', 'Rakkipanda - EB-BA505ABU', 'Samsung A20/ A30/ A50/ A30s/ A50s'),
-('BRPBS1', 'Rakkipanda - B-S1', 'Vivo Y21 2020/ Y21s/ Y21A/ Y21t/ Y33s');
+('BRPBS1', 'Rakkipanda - B-S1', 'Vivo Y21 2020/ Y21s/ Y21A/ Y21t/ Y33s')
+ON CONFLICT (item_code) DO NOTHING;
