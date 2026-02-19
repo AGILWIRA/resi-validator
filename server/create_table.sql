@@ -11,11 +11,8 @@ CREATE TABLE IF NOT EXISTS item (
 CREATE TABLE IF NOT EXISTS resi (
   id SERIAL PRIMARY KEY,
   resi_number VARCHAR(255) NOT NULL UNIQUE,
-  item_code VARCHAR(255) NOT NULL,
-  item_name VARCHAR(255) NOT NULL,
-  quantity_item INTEGER NOT NULL DEFAULT 1,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
-  FOREIGN KEY (item_code) REFERENCES item(item_code) ON DELETE CASCADE
+  total_items INTEGER DEFAULT 0,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
 );
 
 -- Tabel resi_items (detail items dalam satu resi untuk verifikasi per item)
@@ -23,7 +20,8 @@ CREATE TABLE IF NOT EXISTS resi_items (
   id SERIAL PRIMARY KEY,
   resi_id INTEGER NOT NULL,
   item_code VARCHAR(255) NOT NULL,
-  quantity INTEGER NOT NULL DEFAULT 1,
+  item_name VARCHAR(255) NOT NULL,
+  quantity_item INTEGER NOT NULL DEFAULT 1,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
   FOREIGN KEY (resi_id) REFERENCES resi(id) ON DELETE CASCADE,
   FOREIGN KEY (item_code) REFERENCES item(item_code) ON DELETE CASCADE
