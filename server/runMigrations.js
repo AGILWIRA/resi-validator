@@ -2,13 +2,31 @@ const fs = require('fs');
 const path = require('path');
 const { Pool } = require('pg');
 
-// Only load .env in development
-if (process.env.NODE_ENV !== 'production') {
+const isRailway = Boolean(
+  process.env.RAILWAY_ENVIRONMENT ||
+  process.env.RAILWAY_PROJECT_ID ||
+  process.env.RAILWAY_STATIC_URL
+);
+
+// Only load .env when running locally and DATABASE_URL is not provided
+if (!isRailway && !process.env.DATABASE_URL) {
   require('dotenv').config({ override: false });
+}
+
+function describeDbUrl(value) {
+  if (!value) return 'missing';
+  try {
+    const u = new URL(value);
+    const db = u.pathname ? u.pathname.replace('/', '') : '';
+    return `${u.hostname}:${u.port || ''}/${db}`;
+  } catch (err) {
+    return 'invalid-url';
+  }
 }
 
 async function run() {
   console.log('[Migration] DATABASE_URL:', process.env.DATABASE_URL ? 'SET' : 'NOT SET');
+  console.log('[Migration] DATABASE_URL host:', describeDbUrl(process.env.DATABASE_URL));
   if (!process.env.DATABASE_URL) {
     console.error('[Migration] ERROR: DATABASE_URL not set!');
     throw new Error('DATABASE_URL environment variable is required');

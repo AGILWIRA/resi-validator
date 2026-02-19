@@ -1,5 +1,11 @@
-// Only load .env in development, not in production (Railway)
-if (process.env.NODE_ENV !== 'production') {
+const isRailway = Boolean(
+  process.env.RAILWAY_ENVIRONMENT ||
+  process.env.RAILWAY_PROJECT_ID ||
+  process.env.RAILWAY_STATIC_URL
+);
+
+// Only load .env when running locally and DATABASE_URL is not provided
+if (!isRailway && !process.env.DATABASE_URL) {
   require('dotenv').config({ override: false });
 }
 const express = require('express');
@@ -7,7 +13,19 @@ const cors = require('cors');
 const { Pool } = require('pg');
 const runMigrations = require('./runMigrations');
 
+function describeDbUrl(value) {
+  if (!value) return 'missing';
+  try {
+    const u = new URL(value);
+    const db = u.pathname ? u.pathname.replace('/', '') : '';
+    return `${u.hostname}:${u.port || ''}/${db}`;
+  } catch (err) {
+    return 'invalid-url';
+  }
+}
+
 console.log('[Server] DATABASE_URL available:', !!process.env.DATABASE_URL);
+console.log('[Server] DATABASE_URL host:', describeDbUrl(process.env.DATABASE_URL));
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
 const app = express();
