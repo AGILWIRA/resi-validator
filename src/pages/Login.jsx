@@ -2,12 +2,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
 
-const USERS = {
-  owner: { username: 'owner', password: '123', role: 'owner', name: 'Owner Account' },
-  admin: { username: 'admin', password: '123', role: 'admin', name: 'Admin Account' },
-  checker: { username: 'checker', password: '123', role: 'checker', name: 'Checker Account' },
-};
-
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -15,30 +9,48 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
     setIsLoading(true);
 
-    // Simulasi login proses
-    setTimeout(() => {
-      // Cari user berdasarkan username (role ditentukan dari data user di DB)
-      const user = Object.values(USERS).find((u) => u.username === username);
+    try {
+      const response = await fetch('http://localhost:4000/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      });
 
-      if (!user) {
-        setError('User tidak ditemukan');
-      } else if (password === user.password) {
-        localStorage.setItem('user', JSON.stringify({
-          username: user.username,
-          role: user.role,
-          name: user.name,
-        }));
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || 'Login failed');
+        setIsLoading(false);
+        return;
+      }
+
+      // Store user info from server response
+      localStorage.setItem('user', JSON.stringify({
+        id: data.id,
+        username: data.username,
+        role: data.role,
+        name: data.name,
+      }));
+      
+      // Redirect based on role
+      if (data.role === 'admin' || data.role === 'owner') {
+        navigate('/dashboard');
+      } else if (data.role === 'checker') {
         navigate('/dashboard');
       } else {
-        setError('Username atau password salah!');
+        navigate('/dashboard');
       }
+    } catch (err) {
+      setError('Koneksi ke server gagal. Pastikan server berjalan di localhost:4000');
+      console.error('Login error:', err);
+    } finally {
       setIsLoading(false);
-    }, 800);
+    }
   };
 
   return (

@@ -7,6 +7,10 @@ import ResiDetail from './pages/ResiDetail';
 import InputResi from './pages/InputResi';
 import ValidasiResi from './pages/ValidasiResi';
 import ValidasiDetail from './pages/ValidasiDetail';
+import AdminItems from './pages/AdminItems';
+import AdminResi from './pages/AdminResi';
+import AdminUsers from './pages/AdminUsers';
+import CheckerHistory from './pages/CheckerHistory';
 
 function App() {
   // Suppress MetaMask extension errors jika extension tidak tersedia
@@ -27,9 +31,14 @@ function App() {
         <Route path="/resi/:id" element={<ResiDetail />} />
         <Route path="/validasi" element={<ValidasiResi />} />
         <Route path="/validasi-detail/:resiId" element={<ValidasiDetail />} />
+        <Route path="/admin/items" element={<AdminItems />} />
+        <Route path="/admin/resi" element={<AdminResi />} />
+        <Route path="/admin/users" element={<AdminUsers />} />
+        <Route path="/checker/history" element={<CheckerHistory />} />
       </Routes>
     </Router>
   );
 }
 
 export default App;
+

@@ -118,13 +118,18 @@ export default function ValidasiDetail() {
     const currentStatus = verificationStatus[currentItem.id];
     
     try {
+      // Get current user from localStorage
+      const userStr = localStorage.getItem('user');
+      const user = userStr ? JSON.parse(userStr) : null;
+      const checkerUsername = user?.username || 'unknown';
+      
       const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:4000';
       const res = await fetch(
         `${apiUrl}/api/resi_items/${currentItem.id}/verify`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ scanned_code: scannedCode.toUpperCase() }),
+          body: JSON.stringify({ scanned_code: scannedCode.toUpperCase(), checker: checkerUsername }),
         }
       );
 
