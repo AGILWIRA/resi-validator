@@ -15,7 +15,8 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:4000/api/auth/login', {
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:4000';
+      const response = await fetch(`${apiUrl}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
@@ -46,7 +47,7 @@ export default function Login() {
         navigate('/dashboard');
       }
     } catch (err) {
-      setError('Koneksi ke server gagal. Pastikan server berjalan di localhost:4000');
+      setError('Koneksi ke server gagal. Pastikan server berjalan.');
       console.error('Login error:', err);
     } finally {
       setIsLoading(false);
